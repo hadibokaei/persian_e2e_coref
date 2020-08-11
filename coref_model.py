@@ -37,9 +37,9 @@ class CorefModel(object):
 
     input_props = []
     input_props.append((tf.string, [None, None])) # Tokens.
-    input_props.append((tf.float16, [None, None, self.context_embeddings.size])) # Context embeddings.
-    input_props.append((tf.float16, [None, None, self.head_embeddings.size])) # Head embeddings.
-    input_props.append((tf.float16, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
+    input_props.append((tf.float32, [None, None, self.context_embeddings.size])) # Context embeddings.
+    input_props.append((tf.float32, [None, None, self.head_embeddings.size])) # Head embeddings.
+    input_props.append((tf.float32, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
     input_props.append((tf.int32, [None, None, None])) # Character indices.
     input_props.append((tf.int32, [None])) # Text lengths.
     input_props.append((tf.int32, [None])) # Speaker IDs.
