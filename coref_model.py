@@ -374,7 +374,7 @@ class CorefModel(object):
       with tf.variable_scope("head_scores"):
         self.head_scores = util.projection(context_outputs, 1) # [num_words, 1]
       span_head_scores = tf.gather(self.head_scores, span_indices) # [k, max_span_width, 1]
-      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float16), 2) # [k, max_span_width, 1]
+      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float32), 2) # [k, max_span_width, 1]
       span_head_scores += tf.log(span_mask) # [k, max_span_width, 1]
       span_attention = tf.nn.softmax(span_head_scores, 1) # [k, max_span_width, 1]
       span_head_emb = tf.reduce_sum(span_attention * span_text_emb, 1) # [k, emb]
