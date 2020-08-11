@@ -77,6 +77,7 @@ class CorefModel(object):
       while True:
         random.shuffle(train_examples)
         for example in train_examples:
+          print(example)
           tensorized_example = self.tensorize_example(example, is_training=True)
           feed_dict = dict(zip(self.queue_input_tensors, tensorized_example))
           session.run(self.enqueue_op, feed_dict=feed_dict)
