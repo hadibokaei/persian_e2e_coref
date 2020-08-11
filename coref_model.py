@@ -37,9 +37,9 @@ class CorefModel(object):
 
     input_props = []
     input_props.append((tf.string, [None, None])) # Tokens.
-    input_props.append((tf.float32, [None, None, self.context_embeddings.size])) # Context embeddings.
-    input_props.append((tf.float32, [None, None, self.head_embeddings.size])) # Head embeddings.
-    input_props.append((tf.float32, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
+    input_props.append((tf.float16, [None, None, self.context_embeddings.size])) # Context embeddings.
+    input_props.append((tf.float16, [None, None, self.head_embeddings.size])) # Head embeddings.
+    input_props.append((tf.float16, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
     input_props.append((tf.int32, [None, None, None])) # Character indices.
     input_props.append((tf.int32, [None])) # Text lengths.
     input_props.append((tf.int32, [None])) # Speaker IDs.
@@ -374,7 +374,7 @@ class CorefModel(object):
       with tf.variable_scope("head_scores"):
         self.head_scores = util.projection(context_outputs, 1) # [num_words, 1]
       span_head_scores = tf.gather(self.head_scores, span_indices) # [k, max_span_width, 1]
-      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float32), 2) # [k, max_span_width, 1]
+      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float16), 2) # [k, max_span_width, 1]
       span_head_scores += tf.log(span_mask) # [k, max_span_width, 1]
       span_attention = tf.nn.softmax(span_head_scores, 1) # [k, max_span_width, 1]
       span_head_emb = tf.reduce_sum(span_attention * span_text_emb, 1) # [k, emb]
