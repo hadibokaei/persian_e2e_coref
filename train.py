@@ -22,7 +22,7 @@ if __name__ == "__main__":
   eval_frequency = config["eval_frequency"]
 
   model = cm.CorefModel(config)
-  saver = tf.train.Saver()
+  saver = tf.train.Saver(max_to_keep=10)
 
   log_dir = config["log_dir"]
   writer = tf.summary.FileWriter(log_dir, flush_secs=20)
