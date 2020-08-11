@@ -557,6 +557,7 @@ class CorefModel(object):
 
     summary_dict = {}
     conll_results = conll.evaluate_conll(self.config["conll_eval_path"], coref_predictions, official_stdout)
+    print(conll_results)
     average_f1 = sum(results["f"] for results in conll_results.values()) / len(conll_results)
     summary_dict["Average F1 (conll)"] = average_f1
     print("Average F1 (conll): {:.2f}%".format(average_f1))
