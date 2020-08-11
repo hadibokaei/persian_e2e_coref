@@ -376,7 +376,7 @@ class CorefModel(object):
       span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float32), 2) # [k, max_span_width, 1]
       span_head_scores += tf.log(span_mask) # [k, max_span_width, 1]
       span_attention = tf.nn.softmax(span_head_scores, 1) # [k, max_span_width, 1]
-      span_head_emb = tf.reduce_sum(span_attention * span_text_emb, 1) # [k, emb]
+      span_head_emb = tf.cast(tf.reduce_sum(tf.cast(span_attention, tf.float16) * tf.cast(span_text_emb, tf.float16), 1), tf.float32) # [k, emb]
       span_emb_list.append(span_head_emb)
 
     span_emb = tf.concat(span_emb_list, 1) # [k, emb]
