@@ -37,9 +37,9 @@ class CorefModel(object):
 
     input_props = []
     input_props.append((tf.string, [None, None])) # Tokens.
-    input_props.append((tf.float16, [None, None, self.context_embeddings.size])) # Context embeddings.
-    input_props.append((tf.float16, [None, None, self.head_embeddings.size])) # Head embeddings.
-    input_props.append((tf.float16, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
+    input_props.append((tf.float32, [None, None, self.context_embeddings.size])) # Context embeddings.
+    input_props.append((tf.float32, [None, None, self.head_embeddings.size])) # Head embeddings.
+    input_props.append((tf.float32, [None, None, self.lm_size, self.lm_layers])) # LM embeddings.
     input_props.append((tf.int32, [None, None, None])) # Character indices.
     input_props.append((tf.int32, [None])) # Text lengths.
     input_props.append((tf.int32, [None])) # Speaker IDs.
@@ -77,7 +77,6 @@ class CorefModel(object):
       while True:
         random.shuffle(train_examples)
         for example in train_examples:
-          print(example['doc_key'])
           tensorized_example = self.tensorize_example(example, is_training=True)
           feed_dict = dict(zip(self.queue_input_tensors, tensorized_example))
           session.run(self.enqueue_op, feed_dict=feed_dict)
@@ -243,7 +242,7 @@ class CorefModel(object):
       char_emb = tf.gather(tf.get_variable("char_embeddings", [len(self.char_dict), self.config["char_embedding_size"]]), char_index) # [num_sentences, max_sentence_length, max_word_length, emb]
       flattened_char_emb = tf.reshape(char_emb, [num_sentences * max_sentence_length, util.shape(char_emb, 2), util.shape(char_emb, 3)]) # [num_sentences * max_sentence_length, max_word_length, emb]
       flattened_aggregated_char_emb = util.cnn(flattened_char_emb, self.config["filter_widths"], self.config["filter_size"]) # [num_sentences * max_sentence_length, emb]
-      aggregated_char_emb = tf.cast(tf.reshape(flattened_aggregated_char_emb, [num_sentences, max_sentence_length, util.shape(flattened_aggregated_char_emb, 1)]), tf.float16) # [num_sentences, max_sentence_length, emb]
+      aggregated_char_emb = tf.reshape(flattened_aggregated_char_emb, [num_sentences, max_sentence_length, util.shape(flattened_aggregated_char_emb, 1)]) # [num_sentences, max_sentence_length, emb]
       context_emb_list.append(aggregated_char_emb)
       head_emb_list.append(aggregated_char_emb)
 
@@ -374,7 +373,7 @@ class CorefModel(object):
       with tf.variable_scope("head_scores"):
         self.head_scores = util.projection(context_outputs, 1) # [num_words, 1]
       span_head_scores = tf.gather(self.head_scores, span_indices) # [k, max_span_width, 1]
-      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float16), 2) # [k, max_span_width, 1]
+      span_mask = tf.expand_dims(tf.sequence_mask(span_width, self.config["max_span_width"], dtype=tf.float32), 2) # [k, max_span_width, 1]
       span_head_scores += tf.log(span_mask) # [k, max_span_width, 1]
       span_attention = tf.nn.softmax(span_head_scores, 1) # [k, max_span_width, 1]
       span_head_emb = tf.reduce_sum(span_attention * span_text_emb, 1) # [k, emb]
