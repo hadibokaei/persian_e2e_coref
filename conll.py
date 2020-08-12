@@ -67,7 +67,7 @@ def output_conll(input_file, output_file, predictions):
       else:
         row[-1] = "|".join(coref_list)
 
-      output_file.write("   ".join(row))
+      output_file.write("\t".join(row))
       output_file.write("\n")
       word_index += 1
 
