@@ -9,6 +9,9 @@ import tensorflow as tf
 import coref_model as cm
 import util
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 if __name__ == "__main__":
   config = util.initialize_from_env()
   model = cm.CorefModel(config)
