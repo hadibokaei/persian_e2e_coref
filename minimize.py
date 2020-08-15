@@ -208,6 +208,7 @@ def minimize_partition(name, language, extension, labels, stats):
 
 def minimize_language(language, labels, stats):
     minimize_partition("dev", language, "v4_gold_conll", labels, stats)
+    minimize_partition("test", language, "v4_gold_conll", labels, stats)
     minimize_partition("train", language, "v4_gold_conll", labels, stats)
 
 
